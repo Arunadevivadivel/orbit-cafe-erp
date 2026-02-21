@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
-import { TrendingUp, ShoppingBag, Users, DollarSign, CreditCard, Wallet, Smartphone } from "lucide-react";
+import { TrendingUp, ShoppingBag, Users, DollarSign } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from "recharts";
+import dashboardBanner from "@/assets/dashboard-banner.jpg";
+import dishCappuccino from "@/assets/dish-cappuccino.jpg";
+import dishLatte from "@/assets/dish-latte.jpg";
+import dishCroissant from "@/assets/dish-croissant.jpg";
+import dishChocolateCake from "@/assets/dish-chocolate-cake.jpg";
 
 const revenueData = [
   { name: "Mon", revenue: 4200, orders: 85 },
@@ -33,6 +38,13 @@ const stats = [
   { label: "Avg. Order Value", value: "₹243", change: "+3.1%", icon: TrendingUp, trend: "up" },
 ];
 
+const topDishes = [
+  { name: "Cappuccino", sold: 42, image: dishCappuccino },
+  { name: "Latte", sold: 38, image: dishLatte },
+  { name: "Croissant", sold: 27, image: dishCroissant },
+  { name: "Chocolate Cake", sold: 19, image: dishChocolateCake },
+];
+
 const recentOrders = [
   { id: "#BF1234", customer: "Walk-in", items: 3, amount: "₹520", type: "Dine-In", status: "Served" },
   { id: "#BF1235", customer: "Rahul K.", items: 2, amount: "₹340", type: "Takeaway", status: "Ready" },
@@ -53,10 +65,34 @@ const item = {
 const AdminDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Good Morning! ☕</h1>
-        <p className="text-muted-foreground text-sm mt-1">Here's what's happening at your café today</p>
+      {/* Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl overflow-hidden mb-8 h-48"
+      >
+        <img src={dashboardBanner} alt="Café overview" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
+        <div className="absolute inset-0 flex items-center px-8">
+          <div>
+            <h1 className="text-2xl font-bold text-primary-foreground">Good Morning! ☕</h1>
+            <p className="text-primary-foreground/80 text-sm mt-1">Here's what's happening at your café today</p>
+            <div className="flex gap-6 mt-4">
+              <div>
+                <p className="text-xs text-primary-foreground/60">Revenue</p>
+                <p className="text-lg font-bold text-primary-foreground">₹43,250</p>
+              </div>
+              <div>
+                <p className="text-xs text-primary-foreground/60">Orders</p>
+                <p className="text-lg font-bold text-primary-foreground">178</p>
+              </div>
+              <div>
+                <p className="text-xs text-primary-foreground/60">Staff</p>
+                <p className="text-lg font-bold text-primary-foreground">12</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Stat Cards */}
@@ -79,8 +115,8 @@ const AdminDashboard = () => {
         ))}
       </motion.div>
 
-      {/* Charts Row */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+      {/* Charts + Top Dishes Row */}
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
         {/* Revenue Chart */}
         <motion.div variants={item} className="lg:col-span-2 glass-card p-6">
           <div className="flex items-center justify-between mb-6">
@@ -93,19 +129,13 @@ const AdminDashboard = () => {
               <button className="px-3 py-1 text-xs font-medium text-muted-foreground rounded-full hover:text-foreground">Monthly</button>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={revenueData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(252, 20%, 92%)" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "hsl(250, 10%, 50%)" }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "hsl(250, 10%, 50%)" }} tickFormatter={(v) => `₹${v / 1000}K`} />
               <Tooltip
-                contentStyle={{
-                  background: "rgba(255,255,255,0.9)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid hsl(252, 20%, 90%)",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 24px hsl(252 75% 60% / 0.1)",
-                }}
+                contentStyle={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)", border: "1px solid hsl(252, 20%, 90%)", borderRadius: "12px", boxShadow: "0 4px 24px hsl(252 75% 60% / 0.1)" }}
                 formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]}
               />
               <Line type="monotone" dataKey="revenue" stroke="hsl(252, 75%, 60%)" strokeWidth={3} dot={false} />
@@ -117,9 +147,9 @@ const AdminDashboard = () => {
         <motion.div variants={item} className="glass-card p-6">
           <h3 className="text-base font-semibold text-foreground mb-1">Payment Split</h3>
           <p className="text-xs text-muted-foreground mb-4">By payment mode</p>
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={160}>
             <PieChart>
-              <Pie data={paymentData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={4} dataKey="value">
+              <Pie data={paymentData} cx="50%" cy="50%" innerRadius={45} outerRadius={68} paddingAngle={4} dataKey="value">
                 {paymentData.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
                 ))}
@@ -127,12 +157,30 @@ const AdminDashboard = () => {
               <Tooltip formatter={(value: number) => [`${value}%`]} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex justify-center gap-4 mt-2">
+          <div className="flex flex-col gap-1.5 mt-2">
             {paymentData.map((p, i) => (
               <div key={i} className="flex items-center gap-1.5 text-xs">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: p.color }} />
                 <span className="text-muted-foreground">{p.name}</span>
-                <span className="font-semibold text-foreground">{p.value}%</span>
+                <span className="font-semibold text-foreground ml-auto">{p.value}%</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Top Dishes */}
+        <motion.div variants={item} className="glass-card p-6">
+          <h3 className="text-base font-semibold text-foreground mb-1">Top Dishes</h3>
+          <p className="text-xs text-muted-foreground mb-4">Best sellers today</p>
+          <div className="space-y-3">
+            {topDishes.map((dish, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <img src={dish.image} alt={dish.name} className="w-10 h-10 rounded-xl object-cover" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{dish.name}</p>
+                  <p className="text-xs text-muted-foreground">{dish.sold} sold</p>
+                </div>
+                <span className="text-xs font-semibold gradient-primary-text">#{i + 1}</span>
               </div>
             ))}
           </div>
@@ -185,11 +233,7 @@ const AdminDashboard = () => {
                     <td className="py-3 text-muted-foreground">{order.items}</td>
                     <td className="py-3 font-semibold text-foreground">{order.amount}</td>
                     <td className="py-3">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                        order.type === "Dine-In" ? "bg-accent text-accent-foreground" : "bg-secondary text-secondary-foreground"
-                      }`}>
-                        {order.type}
-                      </span>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${order.type === "Dine-In" ? "bg-accent text-accent-foreground" : "bg-secondary text-secondary-foreground"}`}>{order.type}</span>
                     </td>
                     <td className="py-3">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -197,9 +241,7 @@ const AdminDashboard = () => {
                         order.status === "Ready" ? "bg-info/10 text-info" :
                         order.status === "Cooking" ? "bg-warning/10 text-warning" :
                         "bg-muted text-muted-foreground"
-                      }`}>
-                        {order.status}
-                      </span>
+                      }`}>{order.status}</span>
                     </td>
                   </tr>
                 ))}
